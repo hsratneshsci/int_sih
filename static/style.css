@@ -1,18 +1,146 @@
-:root {
-    --bg-color: #121212;
-    --text-color: #e0e0e0;
-    --button-color: #333333;
-    --button-hover: #444444;
+/* General Styles for Black Theme */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+.window {
+    width: 90%;
+    max-width: 1200px;
+    height: 90%;
+    background-color: #1c1c1c;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
 }
+
+/* Status Bar */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #212121;
+    padding: 10px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+}
+
+.status-left {
+    flex: 1;
+}
+
+.status-center {
+    flex: 2;
+    text-align: center;
+}
+
+.status-right {
+    flex: 1;
+    text-align: right;
+}
+
+#time {
+    font-size: 14px;
+}
+
+/* Main Content */
+.content {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* Left Section (Metrics + Graph) */
+.left-section,
+.right-section {
+    flex: 1;
+    background-color: #2c2c2c;
+    border-radius: 10px;
+    padding: 20px;
+    overflow: hidden;
+    color: #e0e0e0;
+}
+
+/* Left Section (Metrics) */
+.left-section h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* Metrics Container (Horizontal Display) */
+.metrics-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.metric-text {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 10px;
+    color: #e0e0e0;
+}
+
+/* Graph Styling */
+canvas#metricsGraph {
+    width: 100%;
+    max-height: 300px;
+    margin-top: 20px;
+}
+
+/* Right Section (Video Stream) */
+.right-section h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.right-section img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Bottom Section (Application Buttons) */
+.bottom-section {
+    background-color: #212121;
+    padding: 15px;
+    text-align: center;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+.app-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
 .app-buttons button {
-    background: var(--button-color);
-    color: var(--text-color);
+    padding: 10px 20px;
+    font-size: 16px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
 }
+
 .app-buttons button:hover {
-    background: var(--button-hover);
+    background: #0056b3;
 }
