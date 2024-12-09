@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="dashboard">
+        <!-- Top Section -->
+        <div class="top">
+            <div class="left-pane">
+                <h2>System Metrics</h2>
+                <div id="metrics">
+                    <p>CPU: <span id="cpu">0%</span></p>
+                    <p>Memory: <span id="memory">0%</span></p>
+                    <p>Disk: <span id="disk">0%</span></p>
+                </div>
+            </div>
+            <div class="right-pane">
+                <h2>Live Stream</h2>
+                <img id="video-stream" src="/video_feed" alt="Live Stream">
+            </div>
+        </div>
+
+        <!-- Bottom Section -->
+        <div class="bottom">
+            <h2>Applications</h2>
+            <div class="app-buttons">
+                {% for key, path in apps.items() %}
+                <button onclick="launchApp('{{ key }}')">{{ key }}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+    <script>
+        // Fetch metrics periodically
+        setInterval(() => {
+            fetch('/metrics')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('cpu').innerText = data.cpu_usage + '%';
+                    document.getElementById('memory').innerText = data.memory_usage + '%';
+                    document.getElementById('disk').innerText = data.disk_usage + '%';
+                });
+        }, 1000);
+
+        // Launch application
+        function launchApp(appKey) {
+            fetch(`/launch/${appKey}`)
+                .then(res => res.text())
+                .then(alert);
+        }
+    </script>
+</body>
+
+</html>

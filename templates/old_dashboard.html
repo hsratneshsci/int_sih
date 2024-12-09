@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #1e1e1e;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .header .center-status {
+            font-size: 16px;
+            font-weight: bold;
+            color: #0a84ff;
+        }
+
+        .header h1 {
+            font-size: 20px;
+        }
+
+        .clock {
+            font-size: 18px;
+        }
+
+        .content {
+            display: grid;
+            grid-template-rows: 1fr auto;
+            grid-template-columns: 1fr 2fr;
+            grid-gap: 10px;
+            flex: 1;
+            padding: 10px;
+        }
+
+        .graph-section {
+            grid-row: 1;
+            grid-column: 1;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .graph-section canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-feed {
+            grid-row: 1;
+            grid-column: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .video-feed img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .app-bar {
+            grid-row: 2;
+            grid-column: span 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .carousel-container {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+        }
+
+        .app-card {
+            min-width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #007bff;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .app-card:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-rows: auto auto auto;
+                grid-template-columns: 1fr;
+            }
+
+            .video-feed,
+            .graph-section,
+            .app-bar {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <div class="header">
+        <h1>System Dashboard</h1>
+        <div class="center-status" id="runningApp">No Application Running</div>
+        <div class="clock" id="clock">--:--:--</div>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content">
+        <!-- Graph Section -->
+        <div class="graph-section">
+            <canvas id="metricsGraph"></canvas>
+        </div>
+
+        <!-- Video Feed Section -->
+        <div class="video-feed">
+            <img id="video-feed" src="/video_feed" alt="Live Video Stream">
+        </div>
+
+        <!-- Applications Bar -->
+        <div class="app-bar">
+            <div class="carousel-container">
+                {% for app_key, app_path in apps.items() %}
+                <div class="app-card" onclick="launchApp('{{ app_key }}')">
+                    <span>{{ app_key }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Clock Update
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            document.getElementById('clock').textContent = time;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Application Name Update
+        function setRunningApp(appName) {
+            document.getElementById('runningApp').textContent = appName || 'No Application Running';
+        }
+
+        // Fetch Metrics and Update Graph
+        async function fetchMetrics() {
+            const response = await fetch('/metrics');
+            return response.json();
+        }
+
+        async function updateGraph() {
+            const metrics = await fetchMetrics();
+            const cpu = metrics.cpu_usage;
+            const memory = metrics.memory_usage;
+            const disk = metrics.disk_usage;
+
+            metricsChart.data.datasets[0].data = [cpu, memory, disk];
+            metricsChart.update();
+        }
+        setInterval(updateGraph, 2000);
+
+        // Launch Application
+        function launchApp(appKey) {
+            fetch(`/launch/${appKey}`).then(response => response.text()).then((message) => {
+                setRunningApp(appKey);
+                alert(message);
+            });
+        }
+
+        // Initialize Graph
+        const ctx = document.getElementById('metricsGraph').getContext('2d');
+        const metricsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Time 1', 'Time 2', 'Time 3'],
+                datasets: [{
+                    label: 'Usage (%)',
+                    data: [10, 20, 30],
+                    borderColor: '#36a2eb',
+                    fill: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>

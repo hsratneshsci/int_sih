@@ -1,0 +1,18 @@
+:root {
+    --bg-color: #121212;
+    --text-color: #e0e0e0;
+    --button-color: #333333;
+    --button-hover: #444444;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+.app-buttons button {
+    background: var(--button-color);
+    color: var(--text-color);
+}
+.app-buttons button:hover {
+    background: var(--button-hover);
+}
